@@ -4,17 +4,17 @@ import eSYS as e
 import random as r
 # To-do: add cutom print function
 add_sudo=["add","Add"]
-remove_sudp=["Rem","Remove","remove","rem"]
+remove_sudo=["Rem","Remove","remove","rem"]
 mod_sudo=["mod","Mod"]
 y_sudo=["y","Yes","Y","Ye","yes","ye"]
 n_sudo=["N","n","No","no"]
-filepathtype=input("File is new? y/n ")
 
 while True:
-    if filepathtype in y_sudo:
+    filepathtype=input("New File? y/n ")
+    if filepathtype in n_sudo:
         selected_file=input("File path: ")
         break
-    elif filepathtype in n_sudo:
+    elif filepathtype in y_sudo:
         try:
             filename=input("Filename? Exclude the extension. ")
             filename= filename+".prof"
@@ -35,7 +35,7 @@ while opperation_Complete is False:
         opp_header = input("Header data: ")
         opp_inf = input("Information: ")
         with open(selected_file,"a") as profile:
-            full_text=opp_header+"-"+opp_inf
+            full_text=opp_header+" : "+opp_inf
             full_text=e.encode_to_STR(full_text,r.randint(1,20))
             #find the character length of the message and add an indicator
             char_count=0
@@ -86,7 +86,48 @@ while opperation_Complete is False:
             else:
                 print("File is empty.")
             f.close()
-    #erase current contents
+    #remove by line (decoded)
+    if Operation in remove_sudo:
+        with open(selected_file,"r")as f:
+            fileTotal=f.read(-1)
+            fileTotalList=[]
+            currentLine=""
+            fileTotal_unencrypted=[]
+            # parse entire file into a list of characters
+            if not fileTotal=="":
+                for i in fileTotal: 
+                    fileTotalList.append(i)
+                print(".")
+                for i in range(0,len(fileTotalList)): #parse by line
+                    if fileTotalList[i]=='c':
+                            char_count=fileTotalList[i-3]+fileTotalList[i-2]+fileTotalList[i-1]
+                            char_count=int(char_count)
+                            for c in range(1,char_count+1):
+                                currentLine+=fileTotalList[i+c]
+
+                            fileTotal_unencrypted.append(e.STRdecode_to_STR(currentLine)+"\n")
+                    currentLine=""
+                for i in range(0,len(fileTotal_unencrypted)):
+                    s.stdout.write(str(i)+" "+fileTotal_unencrypted[i])
+                while True:
+                    try:
+                        lineRem=int(input("Which line? "))
+                    except:
+                        print("Invalid selection.")
+                        lineRem=-2
+                    print(lineRem)
+                    if lineRem==-1:
+                        break
+                    for i in range(0,len(fileTotal_unencrypted)):
+                        if lineRem==i:
+                            fileTotal_unencrypted.remove(fileTotal_unencrypted[i])
+                            s.stdout.write("Line removed.\n")
+                            with open(selected_file,"w") as f:
+                                    pass
+                            break
+            else:
+                s.stdout.write("Nothing to display.")
+                
     if Operation =="clear":
         with open(selected_file,"w") as f:
             f.write("")
